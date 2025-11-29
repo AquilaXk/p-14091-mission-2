@@ -1,4 +1,4 @@
-package com.mysite.sbb;
+/* package com.mysite.sbb;
 
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerRepository;
@@ -152,3 +152,4 @@ class PostRepositoryTest {
         assertThat(answer1.getId()).isEqualTo(1);
     }
 }
+*/

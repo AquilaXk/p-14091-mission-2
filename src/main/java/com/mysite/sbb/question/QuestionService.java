@@ -2,9 +2,14 @@ package com.mysite.sbb.question;
 
 import com.mysite.sbb.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,14 +24,6 @@ public class QuestionService {
     // 데이터베이스 접근을 담당하는 Repository 빈 의존성 주입.
     private final QuestionRepository questionRepository;
 
-    /**
-     * 모든 질문 목록을 조회하는 메서드.
-     * @return 모든 Question 엔티티의 리스트 반환.
-     */
-    public List<Question> getList() {
-        // Repository를 통해 데이터베이스의 모든 질문 레코드를 조회.
-        return this.questionRepository.findAll();
-    }
 
     /**
      * 특정 ID를 가진 질문을 조회하는 메서드.
@@ -65,5 +62,12 @@ public class QuestionService {
 
         // Repository를 통해 데이터베이스에 엔티티 저장.
         this.questionRepository.save(q);
+    }
+
+    public Page<Question> getList(int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.questionRepository.findAll(pageable);
     }
 }
