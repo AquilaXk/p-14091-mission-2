@@ -29,6 +29,8 @@ public class Question {
     // 엔티티가 생성된 일시 저장.
     private LocalDateTime createDate;
 
+    private LocalDateTime ModifyDate;
+
     // 테이블 컬럼 길이 제약 조건 설정 (최대 200자).
     @Column(length = 200)
     private String subject; // 질문 제목.
