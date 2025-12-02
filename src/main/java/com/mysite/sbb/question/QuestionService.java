@@ -1,6 +1,7 @@
 package com.mysite.sbb.question;
 
 import com.mysite.sbb.DataNotFoundException;
+import com.mysite.sbb.user.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,7 +50,7 @@ public class QuestionService {
      * @param subject 생성할 질문의 제목.
      * @param content 생성할 질문의 내용.
      */
-    public void create(String subject, String content) {
+    public void create(String subject, String content, SiteUser user) {
         // 새로운 Question 엔티티 객체 생성.
         Question q = new Question();
 
@@ -59,6 +60,7 @@ public class QuestionService {
 
         // 생성 일시를 현재 시간으로 설정.
         q.setCreateDate(LocalDateTime.now());
+        q.setAuthor(user);
 
         // Repository를 통해 데이터베이스에 엔티티 저장.
         this.questionRepository.save(q);

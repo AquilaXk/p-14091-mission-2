@@ -1,6 +1,7 @@
 package com.mysite.sbb.question;
 
 import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,10 @@ public class Question {
     // 데이터 타입 정의 (TEXT 타입으로 설정하여 긴 내용 저장 가능).
     @Column(columnDefinition = "TEXT")
     private String content; // 질문 내용.
+
+    // 사용자 한명이 여러 질문을 작성할 수 있기 떄문에 ManyToOne 사용(Question의 입장)
+    @ManyToOne
+    private SiteUser author;
 
     // 일대다(OneToMany) 관계 정의: 하나의 질문은 여러 개의 답변을 가짐.
     @OneToMany(

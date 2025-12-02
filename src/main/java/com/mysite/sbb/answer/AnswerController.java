@@ -3,14 +3,19 @@ package com.mysite.sbb.answer;
 
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;
+import com.mysite.sbb.user.SiteUser;
+import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.security.Principal;
 
 /**
  * 답변(Answer) 관련 HTTP 요청을 처리하는 컨트롤러.
@@ -26,6 +31,8 @@ public class AnswerController {
     // 답변 엔티티 관련 비즈니스 로직 Service 빈 주입.
     private final AnswerService answerService;
 
+    private final UserService userService;
+
     /**
      * 질문에 대한 답변을 생성하는 엔드포인트.
      * HTTP POST 요청 '/answer/create/{id}' 경로 처리.
@@ -36,10 +43,17 @@ public class AnswerController {
      * @return 유효성 검증 실패 시, 오류 메시지를 담아 질문 상세 페이지('question_detail')를 반환.
      * 유효성 검증 성공 시, 해당 질문 상세 페이지로 리다이렉트 처리.
      */
+    // 현재 로그인한 사용자의 정보를 알려면 스프링 시큐리티가 제공하는 Principal 객체를 사용해야 한다
+    // principal.getName()을 호출하면 현재 로그인한 사용자의 사용자명(사용자ID)을 알 수 있다.
+    // @PreAuthorize("isAuthenticated()") 애너테이션이 붙은 메서드는 로그인한 경우에만 실행
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
-    public String createAnswer(Model model, @PathVariable("id") Integer id, @Valid AnswerForm answerForm, BindingResult bindingResult) {
+    public String createAnswer(Model model, @PathVariable("id") Integer id, @Valid AnswerForm answerForm, BindingResult bindingResult
+    , Principal principal) {
         // ID를 사용하여 답변 대상 Question 엔티티 조회.
         Question question = this.questionService.getQuestion(id);
+
+        SiteUser siteUser = this.userService.getUser(principal.getName());
 
         // 유효성 검증 결과 확인. 오류 존재 시 폼 오류 처리.
         if (bindingResult.hasErrors()) {
@@ -49,7 +63,7 @@ public class AnswerController {
         }
 
         // Service 계층에 답변 생성 로직 위임.
-        this.answerService.create(question, answerForm.getContent());
+        this.answerService.create(question, answerForm.getContent(), siteUser);
 
         // 답변 생성 성공 후, 해당 질문의 상세 페이지로 리다이렉트하여 이동.
         return String.format("redirect:/question/detail/%s", id);
