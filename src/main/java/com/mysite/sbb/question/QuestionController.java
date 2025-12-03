@@ -94,4 +94,17 @@ public class QuestionController {
         this.questionService.delete(question);
         return "redirect:/";
     }
+
+    // @PreAuthorize("isAuthenticated( )") : 로그인한 사람만 사용 가능
+    // QuestionService의 vote 메서드를 호출하여 사용자(siteUser)를 추천인(voter)으로 저장했다.
+    // 오류가 없다면 추천인을 저장한 후 질문 상세 화면으로 리다이렉트
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/vote/{id}")
+    public String questionVote(Principal principal,
+                               @PathVariable("id") Integer id) {
+        Question question = this.questionService.getQuestion(id);
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.questionService.vote(question, siteUser);
+        return String.format("redirect:/question/detail/%s", id);
+    }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -42,6 +43,10 @@ public class Question {
     // 사용자 한명이 여러 질문을 작성할 수 있기 떄문에 ManyToOne 사용(Question의 입장)
     @ManyToOne
     private SiteUser author;
+
+    // 질문에 여러 사람이 추천할 수 있고 한 사람이 여러 개의 질문을 추천할 수 있다. 따라서 @ManyToMany 애너테이션을 사용
+    @ManyToMany
+    Set<SiteUser> voter;
 
     // 일대다(OneToMany) 관계 정의: 하나의 질문은 여러 개의 답변을 가짐.
     @OneToMany(

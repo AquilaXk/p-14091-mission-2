@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -32,4 +33,8 @@ public class Answer {
 
     @ManyToOne
     private SiteUser author;
+
+    // Set 자료형으로 작성한 이유는 voter 속성값이 서로 중복되지 않도록 하기 위해서이다
+    @ManyToMany
+    Set<SiteUser> voter;
 }
