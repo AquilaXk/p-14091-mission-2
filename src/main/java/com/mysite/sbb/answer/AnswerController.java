@@ -7,7 +7,6 @@ import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.atn.SemanticContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -40,9 +39,10 @@ public class AnswerController {
     /**
      * 질문에 대한 답변을 생성하는 엔드포인트.
      * HTTP POST 요청 '/answer/create/{id}' 경로 처리.
-     * @param model 뷰 렌더링을 위한 데이터 저장 객체.
-     * @param id 답변을 등록할 질문의 고유 ID (경로 변수).
-     * @param answerForm 클라이언트가 제출한 폼 데이터(답변 내용)를 받는 객체 (@Valid를 통해 유효성 검증 대상).
+     *
+     * @param model         뷰 렌더링을 위한 데이터 저장 객체.
+     * @param id            답변을 등록할 질문의 고유 ID (경로 변수).
+     * @param answerForm    클라이언트가 제출한 폼 데이터(답변 내용)를 받는 객체 (@Valid를 통해 유효성 검증 대상).
      * @param bindingResult 유효성 검증 결과 저장 객체.
      * @return 유효성 검증 실패 시, 오류 메시지를 담아 질문 상세 페이지('question_detail')를 반환.
      * 유효성 검증 성공 시, 해당 질문 상세 페이지로 리다이렉트 처리.
@@ -53,7 +53,7 @@ public class AnswerController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Integer id, @Valid AnswerForm answerForm, BindingResult bindingResult
-    , Principal principal) {
+            , Principal principal) {
         // ID를 사용하여 답변 대상 Question 엔티티 조회.
         Question question = this.questionService.getQuestion(id);
 
@@ -65,7 +65,7 @@ public class AnswerController {
             model.addAttribute("question", question);
             return "question_detail";
         }
-        Answer answer =  this.answerService.create(question, answerForm.getContent(), siteUser);
+        Answer answer = this.answerService.create(question, answerForm.getContent(), siteUser);
 
         return String.format("redirect:/question/detail/%s#answer_%s",
                 answer.getQuestion().getId(), answer.getId());
